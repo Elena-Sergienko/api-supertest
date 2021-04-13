@@ -7,8 +7,8 @@ const request = supertest('https://nazarov-kanban-server.herokuapp.com');
 let response;
 
 describe('GET ALL CARDS. Status', () => {
-    before(async () => {          // Async Await делает js в этой функции синхронным (js асинхронно работает обычно
-        await request.get('/card')   // т.е. не ждет когда завершится запрос. Async Await заставляет подождать завершения)
+    before(async () => {          // Async Await (js - Преимущества асинхронного программирования)
+        await request.get('/card')   // Async function - будет ждать Await завершения этой функции)
             .then(res => {           // then - когда положительный ответ получен, тогда сделай...
                 response = res;
                 console.log(res);
@@ -32,6 +32,32 @@ describe('GET ALL CARDS. Status', () => {
             }
             expect(isError).equal(false);
         });
+    });
+
+});
+
+describe('Create, Update, Delete', () => {
+    it('should create new card', async () => {
+        let arrLength = response.body.length;
+
+        let newCard = {
+            description: faker.lorem.word(),
+            priority: 2,
+            status: 'to do',
+            name: faker.name.firstName(),
+        };
+
+        await request
+            .post('/card')
+            .send(newCard)
+            .set("Accept", "application/json");
+        let responseNew;
+        await request.get('/card')
+            .then(res => {
+                responseNew = res;
+            })
+        expect(responseNew.body.length).equal(arrLength + 1);
+
     });
 
 });
